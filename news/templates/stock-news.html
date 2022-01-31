@@ -1,0 +1,52 @@
+<!-- extends for inheritance -->
+{% extends 'base.html' %}
+
+<!-- loading static for image -->
+{% load static %}
+
+<!-- stock news component -->
+{% block body %}  
+
+         <!-- stock page content -->
+         <div class="news_row" style="margin-top:40px;">
+
+             <!-- add followed stocks that => [in profile with user adding ]-->
+            
+
+             <!-- display each charts that user adding -->
+            <div class="news_card " style="margin-bottom:30px;">
+                            
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+                    {
+                    "colorTheme": "dark",
+                    "isTransparent": true,
+                    "displayMode": "regular",
+                    "width": "100%",
+                    "height": "700",
+                    "locale": "en"
+                }
+                    </script>
+                </div>
+                <!-- TradingView Widget END -->
+            </div>
+           
+         </div> 
+        
+         <!-- some of stylish -->
+        <style>
+            .tradingview-widget-container
+            {
+                
+                clip-path: polygon(79% 0, 80% 15%, 100% 16%, 100% 28%, 100% 32%, 100% 28%, 100% 100%, 0 100%, 0 0);
+                color: white;  
+            }
+            .news_card
+            {
+                background:radial-gradient(circle, #1a2049 0%, #13162f 100%);
+            }
+
+        </style>
+
+{% endblock body %}

@@ -1,0 +1,550 @@
+<!-- The News Line -->
+<div class="box-adv" style="margin-top: 20px;">
+  <div class="box-body">
+    <iframe src="https://widget.coinlib.io/widget?type=horizontal_v2&amp;theme=dark&amp;pref_coin_id=1505&amp;invert_hover=no" width="100%" height="36px" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" border="0" style="border:0;margin:0;padding:0;"></iframe>
+  </div>
+</div>
+
+  <!-- The Main Page Content -->
+<div class="user-box first-box">
+  
+    <!-- Some Stocks on tv -->
+    <div class="tv card" style="--delay: .2s;padding-bottom:12px;">
+    <div class="title" style="margin-bottom: 0px;">
+      <h1 class="activity-link active">Stocks You Keep An Eye on</h1>
+      </div>
+    <div class="destination small_chart" style="margin-bottom:10px;min-height:10%">
+        {% for f_stock in followed_stock  %}
+          <div class="destination-card" style="margin: 10px;padding:0;"> 
+            <div class="tradingview-widget-container" >
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+              {
+              "symbol": "NASDAQ:{{f_stock}}",
+              "width": "100%",
+              "height": "100%",
+              "locale": "en",
+              "dateRange": "12M",
+              "colorTheme": "dark",
+              "trendLineColor": "#37a6ef",
+              "underLineColor": "rgba(55, 166, 239, 0.15)",
+              "isTransparent": true,
+              "autosize": true,
+              "largeChartUrl": ""
+            }
+              </script>
+            </div>
+            
+          </div>
+        {% endfor %}
+      </div>
+      <div class="space" style="padding:10px;height:12px;"></div>
+    </div>
+  
+    <!-- Add new stocks user's need  -->
+    <div class="tab card " style="--delay: .4s;max-height: 600px;margin-left: 0;">
+    <div class="title" style="margin-bottom: 0px;">
+      <h1 class="activity-link active">Add More Stocks You Need</h1>
+    </div>
+    <form class="d-flex" action="{% url 'home:home_page' %}" method="POST">
+          {% csrf_token %}
+        <input class="form-control me-2" type="search" placeholder="Stock symbol .." aria-label="Search" name="ticker">
+        <button class="btn btn-outline-secondary" type="submit">Add</button>
+      </form>
+    <div class="discount-wrapper overflowTable" >
+      <table class="container dataTable tbl-header table"  id="position">
+        <thead>
+          <tr>
+            <th class="CN" scope="col"><h1>Name</h1></th>
+            <th scope="col"><h1>Symbol</h1></th>
+            <th scope="col"><h1>Open</h1></th>
+            <th scope="col"><h1>High</h1></th>
+            <th scope="col"><h1>Low</h1></th>
+            <th scope="col"><h1>Close</h1></th>
+            <th class="CN" scope="col"><h1>Edit</h1></th>
+          </tr>
+        </thead>
+        <tbody>
+            
+          {% for  stock,item in my_ziplist%}
+            <tr>
+                <td class="CN" scope="row">{{item.companyName}}</td>
+                <td class="symboll"><a class="btn" style="color:currentColor;cursor:pointer;">{{item.symbol}}</i></a></td>
+                <td>${{item.latestPrice}}</td>
+                <td>${{item.week52High}}</td>
+                <td>${{item.week52Low}}</td>
+                <td>${{item.week52Low}}</td>
+                <td style="text-align:center;" class="del_td CN">
+                  <a href="{% url 'home:delete' stock.id %}" style="text-decoration: none;color:currentColor;cursor:pointer;"> <i style="color:currentColor;" class="fas fa-trash-alt"></i></a>
+                </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>      
+    </div>
+    </div>
+  
+    <!-- CandleStick Charts With JavaScript and Deploy Using API fetch and get  -->
+    <div class="tab card" style="--delay: .4s;max-height: 600px;margin-top:12px;margin-left:0;">
+      <div class="cards-header"style="margin-bottom:50px;"> 
+        <div class="cards-header-date" style="height:50px;">
+          <h1 class="activity-link active" id="header_chart">Stock Chart</h1>
+        </div>  
+      </div>
+      <div id="chartdiv" style="color:white;height: 400px; width:100%;clip-path: polygon(0 0, 100% 0, 100% 100%, 45% 100%, 15% 100%, 9% 94%, 0 95%, 0% 43%, 0 14%);"></div>
+    </div>
+  
+    <!-- StockGauge Charts With JavaScript and Deploy Using API fetch and get  -->
+    <div class="tv card" id="indecator_id" style="--delay: .4s;max-height: 600px;margin-top:12px; margin-left:0;">
+      <div class="cards-header" style="margin-bottom:30px;"> 
+        <div class="cards-header-date" style="height:50px;">
+          <h1 class="activity-link active" id="header_gauge">Technical</h1>
+        </div>  
+      </div>
+      <h2 id="h2"></h2>
+      <div id='myChart_gauge' style="padding: 0; background:none !important; padding-top: 30px;"></div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+<!-- chart and gauge default display  -->
+<script>
+  document.getElementById('header_chart').innerHTML= "F"+" Chart"
+  const output = []
+  fetch("http://api.marketstack.com/v1/eod?access_key=8c161f1752b32b2c2287dbc21e905f4a&symbols=F")
+  .then(res=>
+  {
+  if (res.ok){
+  const stock = res.json();
+  return stock
+  }else{ console.log("Un Success") }
+  }).then(data=> {
+  for (let index = 0; index < data.data.length; index++) 
+  {
+      output.push(data.data[index]);
+      //val.push(data.data[index].close);
+  }
+
+  am4core.ready(function() 
+  {
+      am4core.useTheme(am4themes_animated);
+      var chart = am4core.create("chartdiv", am4charts.XYChart);
+      chart.paddingRight = 20;
+      chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+      var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+      dateAxis.renderer.grid.template.location = 0;
+      var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.tooltip.disabled = true;
+      var series = chart.series.push(new am4charts.CandlestickSeries());
+      series.dataFields.dateX = "date";
+      series.dataFields.valueY = "close";
+      series.dataFields.openValueY = "open";
+      series.dataFields.lowValueY = "low";
+      series.dataFields.highValueY = "high";
+      series.simplifiedProcessing = true;
+      series.tooltipText = "Open:${openValueY.value}\nLow:${lowValueY.value}\nHigh:${highValueY.value}\nClose:${valueY.value}";
+      chart.cursor = new am4charts.XYCursor();
+      valueAxis.renderer.labels.template.fill = am4core.color("#CCC");
+      dateAxis.renderer.labels.template.fill = am4core.color("#CCC");
+
+      var lineSeries = chart.series.push(new am4charts.LineSeries());
+
+      lineSeries.dataFields.dateX = "date";
+      lineSeries.dataFields.valueY = "close";
+      lineSeries.defaultState.properties.visible = false;
+      lineSeries.hiddenInLegend = false;
+      lineSeries.fillOpacity = 0.5;
+      lineSeries.strokeOpacity = 0.5;
+      chart.data = output;
+  });}).catch(error=>console.log('ERROR'))
+
+
+  document.getElementById('header_gauge').innerHTML= "F"+" Technical"
+  const val = []
+  var requestOptions = {
+    method: 'POST',
+    redirect: 'follow'
+  };
+  fetch("https://aa3d6ee8250a.ngrok.io/predict?data=F", requestOptions)
+    .then(response => response.text())
+    .then(result => 
+    {
+      var data = JSON.parse(result);
+      for (var index in data) 
+              val.push(data[index]);
+      console.log(val)
+      window.feed = function(callback) 
+      {
+          var tick = {};
+          tick.plot0 = (val[0]);
+          callback(JSON.stringify(tick));
+      };
+
+  var myConfig = 
+  {
+      type: "gauge",
+      "background-color": "transparent",
+      globals: 
+      {
+      fontSize: 15,
+      fontcolor:"transparent"
+      },
+      
+      plotarea: 
+      {
+      marginTop: 80,
+      },
+      plot: 
+      {
+      size: '100%',
+      valueBox: 
+      {
+          placement: 'center',
+          text: '%v', //default
+          fontSize: 35,
+          fontColor:"#CCC",
+          "background-state": {"background-color": "transparent"},
+          rules: 
+          [
+          {
+            rule: '%v > 6',
+            text: 'Buy'
+          },
+          {
+              rule: '%v >= 4 && %v <= 6',
+              text: 'Natural'
+          },
+          {
+              rule: '%v < 4',
+              text: 'Sell'
+          } 
+          ]
+      }
+      },
+      tooltip: 
+      {
+      borderRadius: 5
+      },
+      scaleR: 
+      {
+      aperture: 180,
+      minValue: 0,
+      maxValue: 10,
+      step: 1,
+      center: 
+      {
+          visible: false
+      },
+      tick: 
+      {
+          visible: false
+      },
+      item: 
+      {
+          offsetR: 0,
+          rules: 
+          [
+          {
+              rule: '%i == 9',
+              offsetX: 15
+          }
+          ]
+      },
+      labels: ['', '', '','', '', '','', '', ''],
+      ring: 
+      {
+          size: 15,
+          rules: 
+          [
+          {
+            rule: '%v <= 4',
+            backgroundColor: '#FB0A02'
+          },
+          {
+              rule: '%v >= 4 && %v <= 6',
+              backgroundColor: '#FAC100'
+          },
+          {
+              rule: '%v >= 6',
+              backgroundColor: '#348D00'
+          }
+          ]
+      }
+      },
+      refresh: 
+      {
+      type: "feed",
+      transport: "js",
+      url: "feed()",
+      interval:10,
+      resetTimeout: 10000000
+      },
+      series:
+      [
+      {
+          values: [5], // starting value
+          backgroundColor: 'black',
+          fontColor:'none',
+          indicator: [10, 10, 10, 10, 0.75],
+          animation: 
+          {
+          effect: 2,
+          method: 1,
+          sequence: 4,
+          speed: 3000
+          },
+      }
+      ]
+        };
+        zingchart.render
+        (
+            {
+            id: 'myChart_gauge',
+            data: myConfig,
+            height: 500,
+            width: '100%'
+            }
+        );
+}).catch(error=>console.log('ERROR'))
+</script>
+
+<!-- chart and gauge that user's choose  -->
+<script>
+  $('.table tbody').on('click','.btn' , function(){
+
+      var currow = $(this).closest('tr');
+      const col1 = currow.find('td:eq(0)').text()
+      const col2 = currow.find('td:eq(1)').text()
+      document.getElementById('header_chart').innerHTML= col2+" Chart"
+      document.getElementById('header_gauge').innerHTML= col2+" Technical"
+      const output = []
+      fetch("http://api.marketstack.com/v1/eod?access_key=8c161f1752b32b2c2287dbc21e905f4a&symbols="+col2)
+      .then(res=>
+      {
+      if (res.ok){
+          const stock = res.json();
+          return stock
+      }else{
+          console.log("Un Success")
+      }
+      }).then(data=> {
+          for (let index = 0; index < data.data.length; index++) 
+          {
+            output.push(data.data[index]);
+            //val.push(data.data[index].close)
+          }
+          // the part of chart programming
+          am4core.ready(function() 
+          {
+              am4core.useTheme(am4themes_animated);
+              var chart = am4core.create("chartdiv", am4charts.XYChart);
+              chart.paddingRight = 20;
+              
+              chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+              
+              var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+              dateAxis.renderer.grid.template.location = 0;
+              
+              var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+              valueAxis.tooltip.disabled = true;
+              
+              var series = chart.series.push(new am4charts.CandlestickSeries());
+              series.dataFields.dateX = "date";
+              series.dataFields.valueY = "close";
+              series.dataFields.openValueY = "open";
+              series.dataFields.lowValueY = "low";
+              series.dataFields.highValueY = "high";
+              series.simplifiedProcessing = true;
+              series.tooltipText = "Open:${openValueY.value}\nLow:${lowValueY.value}\nHigh:${highValueY.value}\nClose:${valueY.value}";
+              chart.cursor = new am4charts.XYCursor();
+              valueAxis.renderer.labels.template.fill = am4core.color("#CCC");
+              dateAxis.renderer.labels.template.fill = am4core.color("#CCC");
+              // a separate series for scrollbar
+              var lineSeries = chart.series.push(new am4charts.LineSeries());
+              lineSeries.dataFields.dateX = "date";
+              
+              lineSeries.dataFields.valueY = "close";
+  
+              // need to set on default state, as initially series is "show"
+              lineSeries.defaultState.properties.visible = false;
+              
+              // hide from legend too (in case there is one)
+              lineSeries.hiddenInLegend = false;
+              lineSeries.fillOpacity = 0.5;
+              lineSeries.strokeOpacity = 0.5;
+              chart.data = output;
+          });
+      }).catch(error=>console.log('ERROR'))
+
+      if (col2!='F')
+      {
+        var x = document.getElementById('myChart_gauge');
+        x.style.display = "none";
+        const element = document.getElementById("h2");
+        element.innerHTML = "Oh , Sorry "+col2+" Stock is Not Supported !";
+        
+        
+      }else{
+        const element = document.getElementById("h2");
+        element.innerHTML = "";
+        var x = document.getElementById('myChart_gauge');
+        x.style.display = "block";
+        
+    document.getElementById('header_gauge').innerHTML= "F"+" Technical"
+    const val = []
+    var requestOptions = {
+      method: 'POST',
+      redirect: 'follow'
+    };
+
+    
+    fetch("http://api.marketstack.com/v1/eod?access_key=8c161f1752b32b2c2287dbc21e905f4a&symbols=F", requestOptions)
+    .then(response => response.text())
+    .then(result => 
+    {
+      var data = JSON.parse(result);
+      for (var index in data) 
+              val.push(data[index]);
+      console.log(val)
+      window.feed = function(callback) 
+      {
+          var tick = {};
+          tick.plot0 = (int(0.25*val[0]));
+          callback(JSON.stringify(tick));
+      };
+
+  var myConfig = 
+  {
+      type: "gauge",
+      "background-color": "transparent",
+      globals: 
+      {
+      fontSize: 15,
+      fontcolor:"transparent"
+      },
+      
+      plotarea: 
+      {
+      marginTop: 80,
+      },
+      plot: 
+      {
+      size: '100%',
+      valueBox: 
+      {
+          placement: 'center',
+          text: '%v', //default
+          fontSize: 35,
+          fontColor:"#CCC",
+          "background-state": {"background-color": "transparent"},
+          rules: 
+          [
+          {
+            rule: '%v > 6',
+            text: 'Buy'
+          },
+          {
+              rule: '%v >= 4 && %v <= 6',
+              text: 'Natural'
+          },
+          {
+              rule: '%v < 4',
+              text: 'Sell'
+          } 
+          ]
+      }
+      },
+      tooltip: 
+      {
+      borderRadius: 5
+      },
+      scaleR: 
+      {
+      aperture: 180,
+      minValue: 0,
+      maxValue: 10,
+      step: 1,
+      center: 
+      {
+          visible: false
+      },
+      tick: 
+      {
+          visible: false
+      },
+      item: 
+      {
+          offsetR: 0,
+          rules: 
+          [
+          {
+              rule: '%i == 9',
+              offsetX: 15
+          }
+          ]
+      },
+      labels: ['', '', '','', '', '','', '', ''],
+      ring: 
+      {
+          size: 15,
+          rules: 
+          [
+          {
+            rule: '%v <= 4',
+            backgroundColor: '#FB0A02'
+          },
+          {
+              rule: '%v >= 4 && %v <= 6',
+              backgroundColor: '#FAC100'
+          },
+          {
+              rule: '%v >= 6',
+              backgroundColor: '#348D00'
+          }
+          ]
+      }
+      },
+      refresh: 
+      {
+      type: "feed",
+      transport: "js",
+      url: "feed()",
+      interval:10,
+      resetTimeout: 10000000
+      },
+      series:
+      [
+      {
+          values: [5], // starting value
+          backgroundColor: 'black',
+          fontColor:'none',
+          indicator: [10, 10, 10, 10, 0.75],
+          animation: 
+          {
+          effect: 2,
+          method: 1,
+          sequence: 4,
+          speed: 3000
+          },
+      }
+      ]
+        };
+        zingchart.render
+        (
+            {
+            id: 'myChart_gauge',
+            data: myConfig,
+            height: 500,
+            width: '100%'
+            }
+        );
+
+}).catch(error=>console.log('ERROR'))
+
+      }
+  });
+</script>
+
+  

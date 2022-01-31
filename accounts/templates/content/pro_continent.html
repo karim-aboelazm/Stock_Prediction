@@ -1,0 +1,231 @@
+{% load static %}
+
+<!-- User Information -->
+<div class="user-box first-box">
+    <div class="activity card"  style="--delay: .2s; height:auto;">
+        <div class="profile_header activity-link active">
+            <h1>Profile</h1>
+        </div>
+        <ul class="profile_ul">
+            <li><div><span class="tag active activity-link active">Full Name : </span><span class="span_dec">{{profile.user.first_name}} {{profile.user.last_name}}</span></div></li>
+            <li><div><span class="tag activity-link active">Email : </span><span class="span_dec">{{profile.user.email}}</span></div></li>
+            {% if profile.phone_number %}
+            <li><div><span class="tag activity-link active">Phone Num : </span><span class="span_dec">{{profile.phone_number}}</span></div></li>
+            {% else %}
+            <li><div><span class="tag activity-link active">Phone Num : </span><span>........</span></div></li>
+            {% endif %}
+            {% if profile.state and profile.city %}
+            <li><div><span class="tag activity-link active">Address   : </span><span class="span_dec">{{profile.state|capfirst}} - {{profile.city}}</span></div></li>
+            {% else %}
+            <li><div><span class="tag activity-link active">Address   : </span><span>........</span></div></li>
+            {% endif %}
+        </ul>
+    </div>
+    
+    <div class="discount card user_img_container user_pic" style="--delay: .4s">
+        {% if profile.image %}
+        <div class="user_img">
+            <img src="{{profile.image.url}}" alt="This is The User Image .. " style="width: 280px;height: 280px;">
+        </div>
+        {% else %}
+        <div class="user_img">
+            <img src="{% static 'img/user.png' %}" alt="This is The User Image .. " style="width: 280px;height: 280px;">
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- User Stocks Portfolio -->
+<div class="user-box first-box " style="margin-bottom: 40px;" >
+    <div class="activity card section_user"  style="--delay: .6s; max-height: 700px;">
+        <div class="profile_header activity-link active" style="margin-bottom: 30px;">
+            <h1>Stocks you need</h1>
+        </div>
+        <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+            {
+            "colorTheme": "dark",
+            "dateRange": "12M",
+            "showChart": false,
+            "locale": "en",
+            "width": "100%",
+            "height": 500,
+            "largeChartUrl": "",
+            "isTransparent": true,
+            "showSymbolLogo": true,
+            "tabs": [
+            {
+                "title": "Indices",
+                "symbols": [
+                {
+                    "s": "FOREXCOM:SPXUSD",
+                    "d": "S&P 500"
+                },
+                {
+                    "s": "FOREXCOM:NSXUSD",
+                    "d": "Nasdaq 100"
+                },
+                {
+                    "s": "FOREXCOM:DJI",
+                    "d": "Dow 30"
+                },
+                {
+                    "s": "INDEX:NKY",
+                    "d": "Nikkei 225"
+                },
+                {
+                    "s": "INDEX:DEU30",
+                    "d": "DAX Index"
+                },
+                {
+                    "s": "FOREXCOM:UKXGBP",
+                    "d": "FTSE 100"
+                }
+                ],
+                "originalTitle": "Indices"
+            },
+            {
+                "title": "Commodities",
+                "symbols": [
+                {
+                    "s": "CME_MINI:ES1!",
+                    "d": "S&P 500"
+                },
+                {
+                    "s": "CME:6E1!",
+                    "d": "Euro"
+                },
+                {
+                    "s": "COMEX:GC1!",
+                    "d": "Gold"
+                },
+                {
+                    "s": "NYMEX:CL1!",
+                    "d": "Crude Oil"
+                },
+                {
+                    "s": "NYMEX:NG1!",
+                    "d": "Natural Gas"
+                },
+                {
+                    "s": "CBOT:ZC1!",
+                    "d": "Corn"
+                }
+                ],
+                "originalTitle": "Commodities"
+            },
+            {
+                "title": "Bonds",
+                "symbols": [
+                {
+                    "s": "CME:GE1!",
+                    "d": "Eurodollar"
+                },
+                {
+                    "s": "CBOT:ZB1!",
+                    "d": "T-Bond"
+                },
+                {
+                    "s": "CBOT:UB1!",
+                    "d": "Ultra T-Bond"
+                },
+                {
+                    "s": "EUREX:FGBL1!",
+                    "d": "Euro Bund"
+                },
+                {
+                    "s": "EUREX:FBTP1!",
+                    "d": "Euro BTP"
+                },
+                {
+                    "s": "EUREX:FGBM1!",
+                    "d": "Euro BOBL"
+                }
+                ],
+                "originalTitle": "Bonds"
+            },
+            {
+                "title": "Forex",
+                "symbols": [
+                {
+                    "s": "FX:EURUSD"
+                },
+                {
+                    "s": "FX:GBPUSD"
+                },
+                {
+                    "s": "FX:USDJPY"
+                },
+                {
+                    "s": "FX:USDCHF"
+                },
+                {
+                    "s": "FX:AUDUSD"
+                },
+                {
+                    "s": "FX:USDCAD"
+                }
+                ],
+                "originalTitle": "Forex"
+            }
+            ]
+        }
+            </script>
+        </div>
+        <div class="block"></div>
+    </div>
+    <div class="discount card user_img_container" style="--delay: .8s">
+        <div class="add_favor_stock" style="margin-bottom: 50px;">
+            <div class="profile_header activity-link active" style="float: left;margin-bottom: 50px;" >
+                <h1>
+                    Add Your favorite Stock
+                </h1>
+            </div>
+            
+            <form action="{% url 'accounts:profile' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="user_followed_stocks" id="stock" placeholder="Enter Stock...">
+                <button href="#" type="submit">
+                    <span class="plus">+</span> Add
+                </button>
+            </form>
+            <br>
+            <small>
+                " hint : The maximum number of following stocks you can add is 4 stocks"
+            </small>
+            <div class="container_followed" style="margin-top:30px;">
+                {% for item in follow_stock %}
+                <div class="item_stock_followed" style="margin: 0 auto">
+                    <h3>{{item}}
+                        <div class="del_icon">
+                            <a href=" {% url 'accounts:delete' item.id %}">
+                                <i style="color:currentColor;" class="fas fa-trash-alt"></i>
+                              </a>
+                        </div>
+                    </h3>
+                </div>
+                {% endfor %}
+             </div>
+        </div>
+
+        <div class="account-wrapper" style="--delay: .8s; float:left; margin:0 auto; margin-bottom:30px; margin-top:40px;">
+            <div class="account-profile" style="margin-bottom: 40px;">
+            {% if profile.image %}
+            <img src="{{profile.image.url}}" alt="" style="width: 150px;height: 150px;">
+            {% else %}
+            <img src="{% static 'img/user.png' %}" alt="" style="width: 150px;height: 150px;">
+            {% endif %}
+            <div class="blob-wrap">
+            <div class="blob"></div>
+            <div class="blob"></div>
+            <div class="blob"></div>
+            </div>
+            <div class="account-name">{{profile.user.first_name}} {{profile.user.last_name}}</div>
+            <div class="account-title">{{profile.user.email}}</div>
+            </div>
+        </div>
+    </div>
+</div>

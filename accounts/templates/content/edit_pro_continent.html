@@ -1,0 +1,22 @@
+{% load static %}
+<!-- loading bootstrap4 for forms and buttons  -->
+{% load bootstrap4 %}
+<div class="main row-card-no-pd mx-auto" style="margin-top:20px;height:300%">
+
+    <!-- Edit profile Page form  -->
+    <form method="POST" enctype="multipart/form-data"class="form-group" class="activity card">
+
+        <!-- csrf_token for not hacking and gaps  -->
+        {% csrf_token %}
+
+        {% bootstrap_form userform %}
+        {% bootstrap_form profileform %}
+
+        <!-- Edit profile Page form button  -->
+
+        {% buttons %}
+        <button class="btn btn-secondary" type="submit">Save</button>
+        {% endbuttons %}
+    
+    </form>
+</div>

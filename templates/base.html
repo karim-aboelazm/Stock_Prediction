@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load static %}
+{% load active_link_tags %}
+<html lang="en">
+{% include "head.html" %}
+<body class="sidebar-is-reduced">
+    <div class="wrapper">
+        {% include "sidebar.html" %}
+        <div class="main-container">
+            {% include "headerbar.html" %}
+         {% block body %}
+         
+         {% endblock body %}
+        </div>
+        <script src="{% static 'js/base.js' %}"></script>
+  </body>
+  
+  
+</html>

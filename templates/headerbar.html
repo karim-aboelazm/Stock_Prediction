@@ -1,0 +1,16 @@
+{% load active_link_tags %}
+
+<div class="header">
+    <div class="logo">Finance
+    <span class=logo-det>AI</span>
+    </div>
+        <ul style="text-align: center;">
+            <li class=""> <a class="header-link {% active_link 'home:home_page' %} " href="{% url 'home:home_page' %}">Home</a>   </li>
+            <li><a class="header-link {% active_link 'news:stock_news' %}" href="{% url 'news:stock_news' %}">Stock News</a></li>
+            <li><a class="header-link {% active_link 'about-us:about' %}" href="{% url 'about-us:about' %}">About Us</a></li>
+        </ul>
+        <label for="#" id="icon">
+            <i class="fa fa-bars"></i>
+        </label>
+        
+ </div>

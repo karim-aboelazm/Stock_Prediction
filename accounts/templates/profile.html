@@ -1,0 +1,12 @@
+<!-- extends for inheritance -->
+{% extends "base.html" %}
+    <!-- loading static for images and javascript file links  -->
+    {% load static %}
+    <!-- Profile page title -->
+    {% block title %}Profile{% endblock title %}
+    <!-- Profile page content -->
+    {% block body %}
+        <!-- Profile page content -->
+        {% include "content/pro_continent.html" %}
+    {% endblock body %}
+    

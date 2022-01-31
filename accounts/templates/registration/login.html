@@ -1,0 +1,21 @@
+<!-- extends for inheritance -->
+{% extends 'account_base.html' %}
+    <!-- loading static for images and javascript file links  -->
+    {% load static %}
+    <!-- loading bootstrap4 for forms and buttons  -->
+    {% load bootstrap4 %}
+    <!-- Login Page title  -->
+    {% block title %}Login{% endblock title %}
+    <!-- Login Page content  -->
+    {% block body_content %}
+        <!-- Login Page main div  -->
+        {% include "content/login_content.html" %}
+        <!-- Login Page style div  -->
+    {% endblock body_content %}
+
+
+
+
+
+    
+    

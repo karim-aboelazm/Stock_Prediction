@@ -1,0 +1,16 @@
+<!-- extends for inheritance -->
+{% extends 'account_base.html' %}
+    <!-- loading static for images and javascript file links  -->
+    {% load static %}
+    <!-- loading bootstrap4 for forms and buttons  -->
+    {% load bootstrap4 %}
+    <!-- Register Page title  -->
+    {% block title %}Register{% endblock title %}
+    <!-- Register Page content  -->
+    {% block body_content %}
+        <!-- Register Page main div  -->
+        {% include "content/register_content.html" %}
+        <!-- Register Page Style div  -->
+    {% endblock body_content %}
+
+    
